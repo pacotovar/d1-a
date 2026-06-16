@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="D1-A">
+  <title>D1-A — Unités 1 &amp; 2</title>
+  <!-- Icône passeport/identité — thème or sur bleu marine -->
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='38' fill='%230d1b4b'/%3E%3Crect x='34' y='20' width='112' height='90' rx='10' fill='%231e2e7a' stroke='%23f0c040' stroke-width='2.5'/%3E%3Crect x='34' y='20' width='14' height='90' rx='8' fill='%230a1640'/%3E%3Ccircle cx='90' cy='50' r='17' fill='%23f0c040' opacity='0.78'/%3E%3Cpath d='M54 90 Q90 78 126 90' stroke='%23f0c040' stroke-width='3.5' fill='none' stroke-linecap='round' opacity='0.6'/%3E%3Ctext x='90' y='134' font-size='34' font-weight='900' text-anchor='middle' font-family='sans-serif' fill='%23f0c040'%3ED1-A%3C/text%3E%3Ctext x='90' y='162' font-size='15' text-anchor='middle' font-family='sans-serif' fill='rgba(255,255,255,0.5)'%3EIdentit%C3%A9%3C/text%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --bg:       #0d1b4b;
+      --surface:  #162060;
+      --card:     #1e2e7a;
+      --accent1:  #5b9cf6;
+      --accent2:  #f0c040;
+      --correct:  #2ecc71;
+      --wrong:    #e74c3c;
+      --text:     #e8eeff;
+      --muted:    #7a90c0;
+      --border:   #2a3e90;
+      --radius:   14px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100dvh;
+    }
+
+    /* ── COVER SCREEN ───────────────────────────────────────── */
+    .cover {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 28px 48px;
+      text-align: center;
+      z-index: 200;
+      gap: 0;
+      overflow-y: auto;
+    }
+    .cover.hidden { display: none; }
+
+    .cover-badge {
+      width: 110px;
+      height: 110px;
+      border-radius: 26px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      gap: 2px;
+    }
+    .cover-badge-code {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--accent2);
+      line-height: 1;
+    }
+    .cover-badge-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .cover-byline { font-size: 11px; color: var(--muted); font-style: italic; margin-bottom: 18px; letter-spacing: 0.3px; }
+
+    .cover-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 5px;
+    }
+    .cover-dossier {
+      font-size: 12px;
+      color: var(--accent1);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .cover-topics {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+    .cover-topics-title {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .cover-topic-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12.5px;
+      line-height: 1.45;
+    }
+    .cover-topic-item:last-child { border-bottom: none; }
+    .cover-topic-unit {
+      background: var(--card);
+      color: var(--accent2);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 10px;
+      white-space: nowrap;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+    .cover-topic-text { color: var(--text); }
+    .cover-topic-text em { color: var(--muted); font-style: normal; font-size: 11.5px; }
+
+    .cover-stats {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .cover-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      text-align: center;
+    }
+    .cover-stat-num { font-size: 22px; font-weight: 900; color: var(--accent1); }
+    .cover-stat-lbl { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    .btn-commencer {
+      width: 100%;
+      max-width: 360px;
+      background: linear-gradient(135deg, var(--accent1), #3a7bd5);
+      color: #fff;
+      border: none;
+      padding: 18px;
+      border-radius: var(--radius);
+      font-size: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+    }
+    .btn-commencer:active { opacity: 0.85; }
+
+    /* ── HEADER ─────────────────────────────────────────────── */
+    .header {
+      background: var(--surface);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-left { display: flex; flex-direction: column; gap: 2px; }
+    .header-title { font-size: 17px; font-weight: 800; color: var(--accent2); }
+    .header-sub { font-size: 11px; color: var(--muted); }
+
+    .btn-restart {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--accent1);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-restart:active { opacity: 0.75; }
+    .header-btns { display: flex; gap: 8px; }
+    .btn-cover {
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); padding: 8px 12px; border-radius: 8px;
+      font-size: 13px; cursor: pointer;
+    }
+    .btn-cover:active { opacity: 0.75; }
+
+    /* ── TABS ───────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 11px 8px;
+      background: none;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+    /* ── TAB CONTENT ────────────────────────────────────────── */
+    .tab-pane { display: none; flex: 1; overflow-y: auto; flex-direction: column; }
+    .tab-pane.active { display: flex; }
+
+    /* ── QUIZ ───────────────────────────────────────────────── */
+    .quiz-wrap {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 0;
+    }
+
+    .progress-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .progress-track {
+      background: var(--card);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .topic-tag {
+      display: inline-block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--accent2);
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 7px;
+    }
+    .question-tr {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 22px;
+    }
+
+    .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+    .opt-btn {
+      background: var(--card);
+      border: 2px solid var(--border);
+      color: var(--text);
+      padding: 15px 18px;
+      border-radius: var(--radius);
+      font-size: 17px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      width: 100%;
+    }
+    .opt-btn:not(:disabled):active { transform: scale(0.98); }
+    .opt-btn:disabled { cursor: default; }
+    .opt-btn.correct {
+      background: rgba(46,204,113,0.18);
+      border-color: var(--correct);
+      color: var(--correct);
+    }
+    .opt-btn.wrong {
+      background: rgba(231,76,60,0.18);
+      border-color: var(--wrong);
+      color: var(--wrong);
+    }
+    .opt-btn .key-hint {
+      display: inline-block;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      margin-right: 8px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .feedback {
+      display: none;
+      border-radius: var(--radius);
+      padding: 13px 15px;
+      margin-bottom: 14px;
+    }
+    .feedback.correct { background: rgba(46,204,113,0.13); border: 1px solid var(--correct); }
+    .feedback.wrong   { background: rgba(231,76,60,0.13);  border: 1px solid var(--wrong); }
+    .fb-head {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+    .feedback.correct .fb-head { color: var(--correct); }
+    .feedback.wrong   .fb-head { color: var(--wrong); }
+    .fb-body { font-size: 13px; line-height: 1.65; color: var(--text); opacity: 0.88; white-space: pre-wrap; }
+
+    .btn-next {
+      display: none;
+      width: 100%;
+      background: var(--accent1);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: var(--radius);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: auto;
+    }
+    .btn-next:active { opacity: 0.85; }
+
+    /* ── SCORE SCREEN ───────────────────────────────────────── */
+    .score-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 24px;
+      text-align: center;
+      flex: 1;
+    }
+    .score-ring {
+      width: 148px;
+      height: 148px;
+      border-radius: 50%;
+      border: 5px solid var(--accent2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .score-num { font-size: 52px; font-weight: 900; color: var(--accent2); line-height: 1; }
+    .score-den { font-size: 15px; color: var(--muted); margin-top: 2px; }
+    .score-pct { font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+    .score-msg { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+    .score-actions { display: flex; gap: 12px; width: 100%; max-width: 320px; }
+    .btn-score-cover {
+      flex: 1; background: var(--card); border: 1px solid var(--border);
+      color: var(--muted); padding: 14px; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600; cursor: pointer;
+    }
+    .btn-new-session {
+      flex: 2; background: var(--accent2);
+      color: var(--bg);
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-new-session:active, .btn-score-cover:active { opacity: 0.85; }
+
+    /* ── GRAMMAR TAB ────────────────────────────────────────── */
+    .grammar-wrap { padding: 16px 16px 40px; }
+
+    .g-section { margin-bottom: 28px; }
+
+    .g-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--accent2);
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+    .g-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+
+    .g-rule {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 9px;
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .g-rule strong { color: var(--accent1); }
+    .g-rule em { color: var(--accent2); font-style: normal; font-weight: 600; }
+    .g-rule .ex { color: var(--muted); font-style: italic; font-size: 12px; display: block; margin-top: 4px; }
+
+    .g-alert {
+      background: rgba(240,192,64,0.12);
+      border: 1px solid rgba(240,192,64,0.5);
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 13px;
+      margin-top: 8px;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .g-alert::before { content: "⚠️ "; }
+
+    table.conj {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+    table.conj th {
+      background: var(--surface);
+      color: var(--accent1);
+      padding: 7px 10px;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    table.conj td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    table.conj tr:last-child td { border-bottom: none; }
+    table.conj td:first-child { color: var(--muted); width: 28%; }
+    table.conj td.f { font-weight: 700; color: var(--accent2); width: 28%; }
+    table.conj td.e { color: var(--muted); font-style: italic; font-size: 12px; }
+    table.conj th:first-child { width: 28%; }
+
+    table.conj.wide td:first-child { width: 20%; }
+    table.conj.wide th:first-child { width: 20%; }
+    table.conj.wide td.f { width: 25%; }
+    table.conj.wide th { font-size: 10px; }
+
+    .kbd-hint {
+      display: inline-block;
+      background: rgba(91,156,246,0.12);
+      border: 1px solid rgba(91,156,246,0.3);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── COVER ───────────────────────────────────────────────────── -->
+<div id="cover" class="cover">
+
+  <div class="cover-badge">
+    <svg width="54" height="44" viewBox="0 0 54 44" style="margin-bottom:2px">
+      <rect x="1" y="1" width="52" height="42" rx="6" fill="none" stroke="#f0c040" stroke-width="1.8"/>
+      <rect x="1" y="1" width="7" height="42" rx="5" fill="rgba(10,22,64,0.8)"/>
+      <circle cx="27" cy="16" r="8" fill="#f0c040" opacity="0.75"/>
+      <path d="M9 37 Q27 30 45 37" stroke="#f0c040" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+    <div class="cover-badge-code">D1-A</div>
+    <div class="cover-badge-sub">Dossier 1</div>
+  </div>
+  <div class="cover-byline">App de Paco Tovar</div>
+
+  <div class="cover-title">Unités 1 &amp; 2</div>
+  <div class="cover-dossier">Objectif Diplomatie · A1/A2</div>
+
+  <div class="cover-topics">
+    <div class="cover-topics-title">Grammaire couverte</div>
+
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U1</span>
+      <span class="cover-topic-text">
+        Être · Avoir · S'appeler<br>
+        <em>Conjugaisons fondamentales au présent</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U1</span>
+      <span class="cover-topic-text">
+        Verbes réguliers en -er<br>
+        <em>parler, travailler, habiter, présenter…</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U1</span>
+      <span class="cover-topic-text">
+        Prépositions pays &amp; villes<br>
+        <em>en / au / aux / à — règles et exemples</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U1</span>
+      <span class="cover-topic-text">
+        Partir · Aller · Négation ne…pas<br>
+        <em>Verbes irréguliers + forme négative</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U2</span>
+      <span class="cover-topic-text">
+        Articles · C'est / Ce sont<br>
+        <em>définis, indéfinis et présentatifs</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U2</span>
+      <span class="cover-topic-text">
+        Contractions (au, du, à la, de la…)<br>
+        <em>Prépositions à et de + articles</em>
+      </span>
+    </div>
+    <div class="cover-topic-item">
+      <span class="cover-topic-unit">U2</span>
+      <span class="cover-topic-text">
+        Féminin des nationalités &amp; professions<br>
+        <em>Règles de formation + exceptions</em>
+      </span>
+    </div>
+  </div>
+
+  <div class="cover-stats">
+    <div class="cover-stat">
+      <div class="cover-stat-num">80</div>
+      <div class="cover-stat-lbl">questions</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num">10</div>
+      <div class="cover-stat-lbl">par session</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-num">∞</div>
+      <div class="cover-stat-lbl">aléatoires</div>
+    </div>
+  </div>
+
+  <button class="btn-commencer" onclick="commencer()">Commencer →</button>
+
+</div>
+
+<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-left">
+    <div class="header-title">D1-A · Unités 1 &amp; 2</div>
+    <div class="header-sub">Objectif Diplomatie — Dossier 1</div>
+  </div>
+  <div class="header-btns">
+    <button class="btn-cover" onclick="goToCover()" title="Retour à la portada">⌂</button>
+    <button class="btn-restart" onclick="restart()">↺ Recommencer</button>
+  </div>
+</header>
+
+<!-- ── TABS ───────────────────────────────────────────────────── -->
+<nav class="tabs">
+  <button class="tab-btn active" id="tab-btn-quiz"    onclick="switchTab('quiz')">📝 Exercices</button>
+  <button class="tab-btn"        id="tab-btn-grammar" onclick="switchTab('grammar')">📖 Grammaire</button>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════════
+     QUIZ TAB
+════════════════════════════════════════════════════════════ -->
+<div id="pane-quiz" class="tab-pane active">
+
+  <div id="score-screen" class="score-screen">
+    <div class="score-ring">
+      <div class="score-num" id="sc-num">0</div>
+      <div class="score-den">/ 10</div>
+    </div>
+    <div class="score-pct" id="sc-pct"></div>
+    <div class="score-msg" id="sc-msg"></div>
+    <div class="score-actions">
+      <button class="btn-score-cover" onclick="goToCover()">⌂ Portada</button>
+      <button class="btn-new-session" onclick="restart()">↺ Nouvelle session</button>
+    </div>
+  </div>
+
+  <div id="quiz-screen" class="quiz-wrap">
+    <div>
+      <div class="progress-row">
+        <span id="prog-text">Question 1 / 10</span>
+        <span id="score-live">Score : 0</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="topic-tag" id="topic-tag">—</div>
+    <div class="question-text" id="q-text"></div>
+    <div class="question-tr"   id="q-tr"></div>
+
+    <div class="options" id="options"></div>
+
+    <div class="feedback" id="feedback">
+      <div class="fb-head" id="fb-head"></div>
+      <div class="fb-body" id="fb-body"></div>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQuestion()"></button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════
+     GRAMMAR TAB
+════════════════════════════════════════════════════════════ -->
+<div id="pane-grammar" class="tab-pane">
+  <div class="grammar-wrap">
+
+    <!-- 1. ÊTRE -->
+    <div class="g-section">
+      <div class="g-title">1. Être &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(ser / estar)</span></div>
+      <div class="g-subtitle">Verbe irrégulier — présent de l'indicatif</div>
+      <table class="conj">
+        <tr><td>Je</td><td class="f">suis</td><td class="e">Je suis diplomate.</td></tr>
+        <tr><td>Tu</td><td class="f">es</td><td class="e">Tu es français ?</td></tr>
+        <tr><td>Il / Elle / On</td><td class="f">est</td><td class="e">Elle est attachée.</td></tr>
+        <tr><td>Nous</td><td class="f">sommes</td><td class="e">Nous sommes en réunion.</td></tr>
+        <tr><td>Vous</td><td class="f">êtes</td><td class="e">Vous êtes Madame Dupont ?</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">sont</td><td class="e">Ils sont délégués.</td></tr>
+      </table>
+      <div class="g-alert">Être + profession → <strong>pas d'article</strong> : <em>Elle est journaliste.</em> ≠ <em>C'est une journaliste.</em></div>
+    </div>
+
+    <!-- 2. AVOIR -->
+    <div class="g-section">
+      <div class="g-title">2. Avoir &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(tener)</span></div>
+      <div class="g-subtitle">Verbe irrégulier — présent de l'indicatif</div>
+      <table class="conj">
+        <tr><td>J'</td><td class="f">ai</td><td class="e">J'ai un badge.</td></tr>
+        <tr><td>Tu</td><td class="f">as</td><td class="e">Tu as une pièce d'identité ?</td></tr>
+        <tr><td>Il / Elle / On</td><td class="f">a</td><td class="e">Il a un passeport.</td></tr>
+        <tr><td>Nous</td><td class="f">avons</td><td class="e">Nous avons une réunion.</td></tr>
+        <tr><td>Vous</td><td class="f">avez</td><td class="e">Vous avez rendez-vous ?</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">ont</td><td class="e">Elles ont des collègues.</td></tr>
+      </table>
+    </div>
+
+    <!-- 3. S'APPELER -->
+    <div class="g-section">
+      <div class="g-title">3. S'appeler &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(llamarse)</span></div>
+      <div class="g-subtitle">Verbe pronominal — attention au doublement du L !</div>
+      <table class="conj">
+        <tr><td>Je</td><td class="f">m'appelle</td><td class="e">Je m'appelle Paul.</td></tr>
+        <tr><td>Tu</td><td class="f">t'appelles</td><td class="e">Tu t'appelles comment ?</td></tr>
+        <tr><td>Il / Elle / On</td><td class="f">s'appelle</td><td class="e">Il s'appelle Luc.</td></tr>
+        <tr><td>Nous</td><td class="f">nous appelons</td><td class="e">Nous nous appelons…</td></tr>
+        <tr><td>Vous</td><td class="f">vous appelez</td><td class="e">Vous vous appelez ?</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">s'appellent</td><td class="e">Ils s'appellent…</td></tr>
+      </table>
+      <div class="g-alert">Le L se double à je/tu/il/ils : <em>app<strong>ell</strong>e</em>. Mais : <em>nous appel<strong>ons</strong></em>, <em>vous appel<strong>ez</strong></em>.</div>
+    </div>
+
+    <!-- 4. VERBES EN -ER -->
+    <div class="g-section">
+      <div class="g-title">4. Verbes réguliers en -er &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(verbos en -er)</span></div>
+      <div class="g-subtitle">Formation : radical + terminaisons</div>
+      <div class="g-rule">
+        <strong>Terminaisons</strong> — identiques pour tous les verbes en -er :<br>
+        <em>-e · -es · -e · -ons · -ez · -ent</em>
+        <span class="ex">parler → je parl<em>e</em>, tu parl<em>es</em>, il parl<em>e</em>, nous parl<em>ons</em>, vous parl<em>ez</em>, ils parl<em>ent</em></span>
+      </div>
+      <table class="conj wide">
+        <tr><th>Sujet</th><th>Parler</th><th>Travailler</th><th>Habiter</th></tr>
+        <tr><td>Je</td><td class="f">parle</td><td class="f">travaille</td><td class="f">habite</td></tr>
+        <tr><td>Tu</td><td class="f">parles</td><td class="f">travailles</td><td class="f">habites</td></tr>
+        <tr><td>Il / Elle</td><td class="f">parle</td><td class="f">travaille</td><td class="f">habite</td></tr>
+        <tr><td>Nous</td><td class="f">parlons</td><td class="f">travaillons</td><td class="f">habitons</td></tr>
+        <tr><td>Vous</td><td class="f">parlez</td><td class="f">travaillez</td><td class="f">habitez</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">parlent</td><td class="f">travaillent</td><td class="f">habitent</td></tr>
+      </table>
+      <div class="g-alert">Les terminaisons -e, -es, -ent sont <strong>muettes</strong> à l'oral. Seules -ons et -ez se prononcent clairement.</div>
+    </div>
+
+    <!-- 5. PARTIR / ALLER -->
+    <div class="g-section">
+      <div class="g-title">5. Partir · Aller &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(partir / ir)</span></div>
+      <div class="g-subtitle">Deux verbes irréguliers essentiels</div>
+      <table class="conj wide">
+        <tr><th>Sujet</th><th>Partir (marcharse)</th><th>Aller (ir)</th></tr>
+        <tr><td>Je / J'</td><td class="f">pars</td><td class="f">vais</td></tr>
+        <tr><td>Tu</td><td class="f">pars</td><td class="f">vas</td></tr>
+        <tr><td>Il / Elle</td><td class="f">part</td><td class="f">va</td></tr>
+        <tr><td>Nous</td><td class="f">partons</td><td class="f">allons</td></tr>
+        <tr><td>Vous</td><td class="f">partez</td><td class="f">allez</td></tr>
+        <tr><td>Ils / Elles</td><td class="f">partent</td><td class="f">vont</td></tr>
+      </table>
+      <div class="g-alert"><em>Aller</em> est très irrégulier : <strong>vais, vas, va, allons, allez, vont</strong>. À mémoriser absolument !</div>
+    </div>
+
+    <!-- 6. NÉGATION -->
+    <div class="g-section">
+      <div class="g-title">6. La négation &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(la negación)</span></div>
+      <div class="g-subtitle">Structure : sujet + ne + verbe + pas</div>
+      <div class="g-rule">
+        <strong>Forme de base</strong> — <em>ne</em> devant le verbe, <em>pas</em> après :<br>
+        <span class="ex">Je travaille → Je <em>ne</em> travaille <em>pas</em> ici.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Devant voyelle ou H muet</strong> — <em>ne</em> → <em>n'</em> (élision) :<br>
+        <span class="ex">Il est → Il <em>n'</em>est <em>pas</em> directeur.</span>
+        <span class="ex">Elle habite → Elle <em>n'</em>habite <em>pas</em> à Paris.</span>
+      </div>
+      <div class="g-alert"><strong>Attention à l'ordre !</strong> Le ne/n' se place AVANT le verbe, jamais entre le sujet et le verbe.</div>
+    </div>
+
+    <!-- 7. PRÉPOSITIONS PAYS / VILLES -->
+    <div class="g-section">
+      <div class="g-title">7. Prépositions — pays &amp; villes &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(preposiciones)</span></div>
+      <div class="g-subtitle">Règle d'or selon le genre et le nombre du pays</div>
+      <div class="g-rule">
+        <strong>Pays féminin</strong> (se terminent en -e) → <em>en</em><br>
+        <span class="ex">en France · en Belgique · en Espagne · en Italie · en Chine</span>
+      </div>
+      <div class="g-rule">
+        <strong>Pays masculin</strong> → <em>au</em><br>
+        <span class="ex">au Mexique · au Japon · au Portugal · au Canada · au Maroc</span>
+      </div>
+      <div class="g-rule">
+        <strong>Pays pluriel</strong> → <em>aux</em><br>
+        <span class="ex">aux États-Unis · aux Pays-Bas · aux Philippines</span>
+      </div>
+      <div class="g-rule">
+        <strong>Ville</strong> → toujours <em>à</em><br>
+        <span class="ex">à Paris · à Bruxelles · à Madrid · à New York · à Genève</span>
+      </div>
+      <div class="g-alert">Exception : pays masculin commençant par voyelle → <em>en</em> : <em>en Iran, en Irak, en Afghanistan</em>.</div>
+    </div>
+
+    <!-- 8. ARTICLES -->
+    <div class="g-section">
+      <div class="g-title">8. Les articles &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(los artículos)</span></div>
+      <div class="g-subtitle">Définis (le/la/l'/les) vs. Indéfinis (un/une/des)</div>
+      <div class="g-rule">
+        <strong>Articles indéfinis</strong> — introduire qqch. pour la 1ère fois / de non spécifique<br>
+        <em>un</em> (masc.) &nbsp;·&nbsp; <em>une</em> (fém.) &nbsp;·&nbsp; <em>des</em> (pluriel)
+        <span class="ex">un diplomate · une conférence · des délégués</span>
+      </div>
+      <div class="g-rule">
+        <strong>Articles définis</strong> — qqch. de connu, unique ou spécifique<br>
+        <em>le</em> (masc.) &nbsp;·&nbsp; <em>la</em> (fém.) &nbsp;·&nbsp; <em>l'</em> (devant voyelle/H muet) &nbsp;·&nbsp; <em>les</em> (pluriel)
+        <span class="ex">le directeur · la salle · l'ambassade · les délégués</span>
+      </div>
+      <div class="g-alert">Devant voyelle ou H muet → <strong>l'</strong> : <em>l'Union européenne, l'hôtel, l'attaché.</em></div>
+    </div>
+
+    <!-- 9. C'EST / CE SONT -->
+    <div class="g-section">
+      <div class="g-title">9. C'est / Ce sont &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(es / son)</span></div>
+      <div class="g-rule">
+        <strong>C'est</strong> + article + nom <u>singulier</u>
+        <span class="ex">C'est un agent d'accueil. &nbsp;/&nbsp; C'est la directrice.</span>
+      </div>
+      <div class="g-rule">
+        <strong>Ce sont</strong> + article + nom <u>pluriel</u>
+        <span class="ex">Ce sont des fonctionnaires. &nbsp;/&nbsp; Ce sont les délégués.</span>
+      </div>
+      <div class="g-alert"><em>Il est journaliste</em> (sans article) ≠ <em>C'est un journaliste</em> (avec article). Avec «c'est», l'article est <strong>toujours obligatoire</strong>.</div>
+    </div>
+
+    <!-- 10. CONTRACTIONS -->
+    <div class="g-section">
+      <div class="g-title">10. Contractions — à et de &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(contracciones)</span></div>
+      <div class="g-subtitle">à / de + article défini → forme contractée</div>
+      <table class="conj">
+        <tr><th>Préposition + article</th><th>Contraction</th><th>Exemple</th></tr>
+        <tr><td>à + le</td><td class="f">au</td><td class="e">Je vais au bureau.</td></tr>
+        <tr><td>à + les</td><td class="f">aux</td><td class="e">Je parle aux délégués.</td></tr>
+        <tr><td>à + la</td><td class="f">à la</td><td class="e">Je vais à la réunion.</td></tr>
+        <tr><td>à + l'</td><td class="f">à l'</td><td class="e">Je vais à l'ambassade.</td></tr>
+        <tr><td>de + le</td><td class="f">du</td><td class="e">Je viens du bureau.</td></tr>
+        <tr><td>de + les</td><td class="f">des</td><td class="e">Je parle des délégués.</td></tr>
+        <tr><td>de + la</td><td class="f">de la</td><td class="e">Je parle de la réunion.</td></tr>
+        <tr><td>de + l'</td><td class="f">de l'</td><td class="e">Je parle de l'ambassade.</td></tr>
+      </table>
+      <div class="g-alert">Seuls «le» et «les» se contractent. <strong>Jamais «la» ni «l'»</strong> : ✗ <em>al la</em>, ✗ <em>al l'</em>.</div>
+    </div>
+
+    <!-- 11. FÉMININ DES NATIONALITÉS -->
+    <div class="g-section">
+      <div class="g-title">11. Féminin des nationalités</div>
+      <div class="g-subtitle">Règles de formation + exceptions principales</div>
+      <div class="g-rule">
+        <strong>Règle générale</strong> — ajouter <em>-e</em> au masculin :<br>
+        <span class="ex">espagnol → espagnole &nbsp;·&nbsp; allemand → allemande</span>
+      </div>
+      <div class="g-rule">
+        <strong>Déjà terminés en -e</strong> — aucun changement :<br>
+        <span class="ex">belge → belge &nbsp;·&nbsp; suisse → suisse &nbsp;·&nbsp; britannique → britannique</span>
+      </div>
+      <div class="g-rule">
+        <strong>-ien → -ienne</strong> (doublement du N) :<br>
+        <span class="ex">italien → italienne &nbsp;·&nbsp; canadien → canadienne &nbsp;·&nbsp; brésilien → brésilienne</span>
+      </div>
+      <div class="g-rule">
+        <strong>-ois / -ais → -oise / -aise</strong> :<br>
+        <span class="ex">suédois → suédoise &nbsp;·&nbsp; français → française &nbsp;·&nbsp; japonais → japonaise</span>
+      </div>
+      <div class="g-rule">
+        <strong>Irréguliers</strong> — à mémoriser :<br>
+        <span class="ex">turc → turque &nbsp;·&nbsp; grec → grecque</span>
+      </div>
+    </div>
+
+    <!-- 12. FÉMININ DES PROFESSIONS -->
+    <div class="g-section">
+      <div class="g-title">12. Féminin des professions &nbsp;<span style="font-weight:400;font-size:13px;color:var(--muted)">(femenino de profesiones)</span></div>
+      <div class="g-subtitle">Formation selon la terminaison du masculin</div>
+      <div class="g-rule">
+        <strong>-eur → -rice</strong> (titres et fonctions) :<br>
+        <span class="ex">directeur → directrice &nbsp;·&nbsp; ambassadeur → ambassadrice</span>
+      </div>
+      <div class="g-rule">
+        <strong>-ier → -ière</strong> :<br>
+        <span class="ex">conseiller → conseillère &nbsp;·&nbsp; infirmier → infirmière</span>
+      </div>
+      <div class="g-rule">
+        <strong>-é → -ée</strong> :<br>
+        <span class="ex">attaché → attachée &nbsp;·&nbsp; délégué → déléguée</span>
+      </div>
+      <div class="g-rule">
+        <strong>Épicènes</strong> (même forme pour les deux genres) :<br>
+        <span class="ex">secrétaire → secrétaire &nbsp;·&nbsp; ministre → ministre &nbsp;·&nbsp; diplomate → diplomate</span>
+      </div>
+      <div class="g-alert">«Ambassadrice» et «directrice» sont les formes officielles utilisées dans les documents diplomatiques.</div>
+    </div>
+
+    <div class="kbd-hint">
+      ⌨️ <strong>Raccourcis clavier :</strong> Appuyez sur <strong>1 · 2 · 3 · 4</strong> pour sélectionner une réponse, et sur <strong>Entrée</strong> ou <strong>Espace</strong> pour passer à la question suivante.
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+/* ================================================================
+   BANQUE DE QUESTIONS — D1-A  (80 questions)
+   Thèmes U1 : Être · Avoir · S'appeler · Verbes en -er · Partir/Aller
+               Négation · Prépositions pays/villes
+   Thèmes U2 : Articles · C'est/Ce sont · Contractions (au/du/...)
+               Féminin nationalités · Féminin professions
+================================================================ */
+const BANK = [
+
+  // ── ÊTRE (7) ─────────────────────────────────────────────────
+  { topic:"Être", q:"Complétez : « Je ___ diplomate. »", tr:"Completa: «Yo ___ diplomático/a.»",
+    opts:["suis","es","est","êtes"], ans:0,
+    xp:"ÊTRE – présent complet :\nje SUIS · tu es · il/elle est\nnous sommes · vous êtes · ils/elles sont\n→ sujet «je» → SUIS\n/ ÊTRE – presente completo :\nyo SUIS · tú es · él/ella est\nnos. sommes · vos. êtes · ellos sont\n→ sujeto «je» → SUIS" },
+
+  { topic:"Être", q:"Complétez : « Tu ___ avocat ? »", tr:"Completa: «¿Tú ___ abogado?»",
+    opts:["suis","es","est","êtes"], ans:1,
+    xp:"ÊTRE – présent complet :\nje suis · tu ES · il/elle est\nnous sommes · vous êtes · ils/elles sont\n→ sujet «tu» → ES\n/ ÊTRE – presente completo :\nyo suis · tú ES · él est · nos. sommes · vos. êtes · ellos sont\n→ sujeto «tu» → ES" },
+
+  { topic:"Être", q:"Complétez : « Elle ___ directrice. »", tr:"Completa: «Ella ___ directora.»",
+    opts:["suis","es","est","sont"], ans:2,
+    xp:"ÊTRE – présent complet :\nje suis · tu es · il/elle EST\nnous sommes · vous êtes · ils/elles sont\n→ sujet «il/elle» → EST\n/ ÊTRE – presente completo :\nyo suis · tú es · él/ella EST · nos. sommes · vos. êtes · ellos sont\n→ sujeto «elle» → EST" },
+
+  { topic:"Être", q:"Complétez : « Nous ___ collègues. »", tr:"Completa: «Nosotros ___ colegas.»",
+    opts:["sommes","êtes","sont","suis"], ans:0,
+    xp:"ÊTRE – présent complet :\nje suis · tu es · il/elle est\nnous SOMMES · vous êtes · ils/elles sont\n→ sujet «nous» → SOMMES\n/ ÊTRE – presente completo :\nnos. SOMMES · vos. êtes · ellos sont\n→ sujeto «nous» → SOMMES" },
+
+  { topic:"Être", q:"Complétez : « Vous ___ français ? »", tr:"Completa: «¿Ustedes ___ franceses?»",
+    opts:["sommes","êtes","sont","est"], ans:1,
+    xp:"ÊTRE – présent complet :\nje suis · tu es · il/elle est\nnous sommes · vous ÊTES · ils/elles sont\n→ sujet «vous» → ÊTES\n/ ÊTRE – presente completo :\nnos. sommes · vos. ÊTES · ellos sont\n→ sujeto «vous» → ÊTES" },
+
+  { topic:"Être", q:"Complétez : « Ils ___ en réunion. »", tr:"Completa: «Ellos ___ en reunión.»",
+    opts:["est","êtes","sont","sommes"], ans:2,
+    xp:"ÊTRE – présent complet :\nje suis · tu es · il/elle est\nnous sommes · vous êtes · ils/elles SONT\n→ sujet «ils» → SONT\n/ ÊTRE – presente completo :\nnos. sommes · vos. êtes · ellos/ellas SONT\n→ sujeto «ils» → SONT" },
+
+  { topic:"Être", q:"Quelle forme d'ÊTRE correspond à « il » ?", tr:"¿Qué forma de ÊTRE corresponde a «il»?",
+    opts:["suis","es","est","sont"], ans:2,
+    xp:"ÊTRE – présent complet :\nje suis · tu es · il/elle EST\nnous sommes · vous êtes · ils/elles sont\n→ «il» (3e pers. sing.) → EST\n/ ÊTRE – presente :\nyo suis · tú es · él/ella EST\n→ «il» (3ª pers. sing.) → EST" },
+
+  // ── AVOIR (6) ─────────────────────────────────────────────────
+  { topic:"Avoir", q:"Complétez : « J'___ un passeport. »", tr:"Completa: «Yo ___ un pasaporte.»",
+    opts:["ai","as","a","avons"], ans:0,
+    xp:"AVOIR – présent complet :\nj'AI · tu as · il/elle a\nnous avons · vous avez · ils/elles ont\n→ sujet «je» (j') → AI\n/ AVOIR – presente completo :\nyo AI · tú as · él/ella a\nnos. avons · vos. avez · ellos ont\n→ sujeto «je» → AI" },
+
+  { topic:"Avoir", q:"Complétez : « Tu ___ quel âge ? »", tr:"Completa: «¿Tú ___ cuántos años?»",
+    opts:["ai","as","a","avez"], ans:1,
+    xp:"AVOIR – présent complet :\nj'ai · tu AS · il/elle a\nnous avons · vous avez · ils/elles ont\n→ sujet «tu» → AS\n/ AVOIR – presente completo :\nyo ai · tú AS · él/ella a\nnos. avons · vos. avez · ellos ont\n→ sujeto «tu» → AS" },
+
+  { topic:"Avoir", q:"Complétez : « Elle ___ un bureau. »", tr:"Completa: «Ella ___ una oficina.»",
+    opts:["ai","as","a","avons"], ans:2,
+    xp:"AVOIR – présent complet :\nj'ai · tu as · il/elle A\nnous avons · vous avez · ils/elles ont\n→ sujet «elle» → A\n/ AVOIR – presente completo :\nyo ai · tú as · él/ella A\nnos. avons · vos. avez · ellos ont\n→ sujeto «elle» → A" },
+
+  { topic:"Avoir", q:"Complétez : « Nous ___ une réunion. »", tr:"Completa: «Nosotros ___ una reunión.»",
+    opts:["avons","avez","ont","a"], ans:0,
+    xp:"AVOIR – présent complet :\nj'ai · tu as · il/elle a\nnous AVONS · vous avez · ils/elles ont\n→ sujet «nous» → AVONS\n/ AVOIR – presente completo :\nnos. AVONS · vos. avez · ellos ont\n→ sujeto «nous» → AVONS" },
+
+  { topic:"Avoir", q:"Complétez : « Vous ___ des collègues ? »", tr:"Completa: «¿Ustedes ___ colegas?»",
+    opts:["avons","avez","ont","a"], ans:1,
+    xp:"AVOIR – présent complet :\nj'ai · tu as · il/elle a\nnous avons · vous AVEZ · ils/elles ont\n→ sujet «vous» → AVEZ\n/ AVOIR – presente completo :\nnos. avons · vos. AVEZ · ellos ont\n→ sujeto «vous» → AVEZ" },
+
+  { topic:"Avoir", q:"Complétez : « Ils ___ un appartement. »", tr:"Completa: «Ellos ___ un apartamento.»",
+    opts:["avons","avez","ont","a"], ans:2,
+    xp:"AVOIR – présent complet :\nj'ai · tu as · il/elle a\nnous avons · vous avez · ils/elles ONT\n→ sujet «ils» → ONT\n/ AVOIR – presente completo :\nyo ai · tú as · él a\nnos. avons · vos. avez · ellos ONT\n→ sujeto «ils» → ONT" },
+
+  // ── S'APPELER (4) ─────────────────────────────────────────────
+  { topic:"S'appeler", q:"Complétez : « Je m'___ Pablo. »", tr:"Completa: «Yo me ___ Pablo.»",
+    opts:["appelle","appelles","appel","appelons"], ans:0,
+    xp:"S'APPELER – présent complet :\nje m'APPELLE · tu t'appelles · il/elle s'appelle\nnous nous appelons · vous vous appelez · ils/elles s'appellent\n→ «je» → m'APPELLE (double L à je/tu/il/ils)\n/ S'APPELER – presente completo :\nyo me APPELLE · tú te appelles · él se appelle\nnos. nous appelons · vos. vous appelez · ellos s'appellent\n→ «je» → me APPELLE (doble L en sing. y 3ª plur.)" },
+
+  { topic:"S'appeler", q:"Complétez : « Tu t'___ comment ? »", tr:"Completa: «¿Tú te ___ cómo?»",
+    opts:["appelle","appelles","appelons","appelez"], ans:1,
+    xp:"S'APPELER – présent complet :\nje m'appelle · tu t'APPELLES · il/elle s'appelle\nnous nous appelons · vous vous appelez · ils/elles s'appellent\n→ «tu» → t'APPELLES\n/ S'APPELER – presente :\nnota: doble L en je/tu/il/elle/ils/elles\n→ «tu» → t'APPELLES" },
+
+  { topic:"S'appeler", q:"Complétez : « Nous nous ___ les Dupont. »", tr:"Completa: «Nosotros nos ___ los Dupont.»",
+    opts:["appelle","appelles","appelons","appellent"], ans:2,
+    xp:"S'APPELER – présent complet :\nje m'appelle · tu t'appelles · il/elle s'appelle\nnous nous APPELONS · vous vous appelez · ils/elles s'appellent\n→ «nous» → nous APPELONS (une seule L !)\n/ S'APPELER – atención :\nnos. y vos. → una sola L : nous APPELONS · vous APPELEZ\nsingular y 3ª plur. → doble LL : appelle/appellent" },
+
+  { topic:"S'appeler", q:"Complétez : « Elles s'___ comment ? »", tr:"Completa: «¿Ellas se ___ cómo?»",
+    opts:["appelle","appelles","appelons","appellent"], ans:3,
+    xp:"S'APPELER – présent complet :\nje m'appelle · tu t'appelles · il/elle s'appelle\nnous nous appelons · vous vous appelez · ils/elles s'APPELLENT\n→ «elles» → s'APPELLENT (double L + -ent)\n/ S'APPELER – presente :\n«elles» → s'APPELLENT (doble L, terminación -ent)" },
+
+  // ── VERBES EN -ER (8) ─────────────────────────────────────────
+  { topic:"Verbes -er", q:"Complétez : « Vous ___ le français ? » (parler)", tr:"Completa: «¿Ustedes ___ francés?» (parler)",
+    opts:["parle","parles","parlons","parlez"], ans:3,
+    xp:"PARLER – verbe régulier en -ER :\nje parle · tu parles · il/elle parle\nnous parlons · vous PARLEZ · ils/elles parlent\n→ «vous» → PARLEZ\nRègle : verbe en -er → radical + -ez pour «vous»\n/ PARLER – verbo regular -ER :\nyo parle · tú parles · él parle\nnos. parlons · vos. PARLEZ · ellos parlent\n→ «vous» → PARLEZ (radical + -ez)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Elle ___ à Paris. » (habiter)", tr:"Completa: «Ella ___ en París.» (habiter)",
+    opts:["habite","habites","habitons","habitez"], ans:0,
+    xp:"HABITER – verbe régulier en -ER :\nje habite · tu habites · il/elle HABITE\nnous habitons · vous habitez · ils/elles habitent\n→ «elle» → HABITE\nRègle : verbe en -er → radical + -e pour il/elle\n/ HABITER – verbo regular -ER :\n«elle» → HABITE (radical + -e)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Nous ___ notre travail. » (aimer)", tr:"Completa: «Nosotros ___ nuestro trabajo.» (aimer)",
+    opts:["aime","aimes","aimons","aiment"], ans:2,
+    xp:"AIMER – verbe régulier en -ER :\nje aime · tu aimes · il/elle aime\nnous AIMONS · vous aimez · ils/elles aiment\n→ «nous» → AIMONS\nRègle : verbe en -er → radical + -ons pour «nous»\n/ AIMER – verbo regular -ER :\n«nous» → AIMONS (radical + -ons)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Je ___ le menu. » (regarder)", tr:"Completa: «Yo ___ el menú.» (regarder)",
+    opts:["regarde","regardes","regardons","regardez"], ans:0,
+    xp:"REGARDER – verbe régulier en -ER :\nje REGARDE · tu regardes · il/elle regarde\nnous regardons · vous regardez · ils/elles regardent\n→ «je» → REGARDE\nRègle : verbe en -er → radical seul pour «je»\n/ REGARDER – verbo regular -ER :\n«je» → REGARDE (radical sin terminación especial)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Ils ___ souvent. » (voyager)", tr:"Completa: «Ellos ___ seguido.» (voyager)",
+    opts:["voyage","voyagent","voyageons","voyagez"], ans:1,
+    xp:"VOYAGER – présent :\nje voyage · tu voyages · il/elle voyage\nnous voyageons · vous voyagez · ils/elles VOYAGENT\n→ «ils» → VOYAGENT\nNote : verbes en -ger → nous voyageONS (+ e pour le son)\n/ VOYAGER – presente :\n«ils» → VOYAGENT (radical + -ent)\nAtención: nous voyageons (conserva sonido suave)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Il ___ à 8 heures. » (arriver)", tr:"Completa: «Él ___ a las 8.» (arriver)",
+    opts:["arrive","arrives","arrivons","arrivez"], ans:0,
+    xp:"ARRIVER – verbe régulier en -ER :\nje arrive · tu arrives · il/elle ARRIVE\nnous arrivons · vous arrivez · ils/elles arrivent\n→ «il» → ARRIVE\nRègle : verbe en -er → radical + -e pour il/elle\n/ ARRIVER – verbo regular -ER :\n«il» → ARRIVE (radical + -e)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Tu ___ un email ? » (envoyer)", tr:"Completa: «¿Tú ___ un correo?» (envoyer)",
+    opts:["envoie","envoies","envoyons","envoyez"], ans:1,
+    xp:"ENVOYER – verbe irrégulier en -yer :\nje envoie · tu ENVOIES · il/elle envoie\nnous envoyons · vous envoyez · ils/elles envoient\n→ «tu» → ENVOIES\nRègle : verbes en -oyer/-ayer → y→i devant e muet\n/ ENVOYER – verbo irregular -yer :\ny→i delante de e muda: je envoie, tu envoies, il envoie\nnos. envoyons, vos. envoyez (conservan y)" },
+
+  { topic:"Verbes -er", q:"Complétez : « Nous ___ le Mexique. » (représenter)", tr:"Completa: «Nosotros ___ a México.» (représenter)",
+    opts:["représente","représentes","représentons","représentent"], ans:2,
+    xp:"REPRÉSENTER – verbe régulier en -ER :\nje représente · tu représentes · il/elle représente\nnous REPRÉSENTONS · vous représentez · ils/elles représentent\n→ «nous» → REPRÉSENTONS\nRègle : verbe en -er → radical + -ons pour «nous»\n/ REPRÉSENTER – verbo regular -ER :\n«nous» → REPRÉSENTONS (radical + -ons)" },
+
+  // ── PARTIR / ALLER (6) ────────────────────────────────────────
+  { topic:"Partir/Aller", q:"Complétez : « Je ___ au bureau. » (aller)", tr:"Completa: «Yo ___ a la oficina.» (aller)",
+    opts:["vais","vas","va","allons"], ans:0,
+    xp:"ALLER – présent (très irrégulier !) :\nje VAIS · tu vas · il/elle va\nnous allons · vous allez · ils/elles vont\n→ «je» → VAIS\nNote : racine totalement différente au singulier\n/ ALLER – presente (muy irregular) :\nyo VAIS · tú vas · él va\nnos. allons · vos. allez · ellos vont\n→ «je» → VAIS (raíz diferente)" },
+
+  { topic:"Partir/Aller", q:"Complétez : « Tu ___ à la réunion ? » (aller)", tr:"Completa: «¿Tú ___ a la reunión?» (aller)",
+    opts:["vais","vas","va","allez"], ans:1,
+    xp:"ALLER – présent :\nje vais · tu VAS · il/elle va\nnous allons · vous allez · ils/elles vont\n→ «tu» → VAS\n/ ALLER – presente :\nyo vais · tú VAS · él va\nnos. allons · vos. allez · ellos vont\n→ «tu» → VAS" },
+
+  { topic:"Partir/Aller", q:"Complétez : « Elle ___ en vacances. » (partir)", tr:"Completa: «Ella ___ de vacaciones.» (partir)",
+    opts:["pars","part","partons","partez"], ans:1,
+    xp:"PARTIR – présent complet :\nje pars · tu pars · il/elle PART\nnous partons · vous partez · ils/elles partent\n→ «elle» → PART\nNote : pas de s à la 3e pers. sing.\n/ PARTIR – presente completo :\nyo pars · tú pars · él/ella PART\nnos. partons · vos. partez · ellos partent\n→ «elle» → PART (sin -s en 3ª pers. sing.)" },
+
+  { topic:"Partir/Aller", q:"Complétez : « Nous ___ en mission. » (partir)", tr:"Completa: «Nosotros ___ en misión.» (partir)",
+    opts:["partons","partez","partent","part"], ans:0,
+    xp:"PARTIR – présent complet :\nje pars · tu pars · il/elle part\nnous PARTONS · vous partez · ils/elles partent\n→ «nous» → PARTONS\n/ PARTIR – presente completo :\nnos. PARTONS · vos. partez · ellos partent\n→ «nous» → PARTONS" },
+
+  { topic:"Partir/Aller", q:"Complétez : « Ils ___ à Madrid. » (aller)", tr:"Completa: «Ellos ___ a Madrid.» (aller)",
+    opts:["allons","allez","vont","va"], ans:2,
+    xp:"ALLER – présent :\nje vais · tu vas · il/elle va\nnous allons · vous allez · ils/elles VONT\n→ «ils» → VONT\nNote : forme très irrégulière à la 3e pers. plur.\n/ ALLER – presente :\nnos. allons · vos. allez · ellos VONT\n→ «ils» → VONT (muy irregular)" },
+
+  { topic:"Partir/Aller", q:"Complétez : « Vous ___ quand ? » (partir)", tr:"Completa: «¿Ustedes ___ cuándo?» (partir)",
+    opts:["partons","partez","partent","pars"], ans:1,
+    xp:"PARTIR – présent complet :\nje pars · tu pars · il/elle part\nnous partons · vous PARTEZ · ils/elles partent\n→ «vous» → PARTEZ\n/ PARTIR – presente completo :\nnos. partons · vos. PARTEZ · ellos partent\n→ «vous» → PARTEZ" },
+
+  // ── NÉGATION (6) ──────────────────────────────────────────────
+  { topic:"Négation", q:"Choisissez la négation correcte : « Il ___ travaille ___ ici. »", tr:"Elige la negación correcta: «Él ___ trabaja ___ aquí.»",
+    opts:["ne … pas","n' … pas","pas … ne","ne … point"], ans:0,
+    xp:"Négation en français :\nnégatif = NE + verbe + PAS\n• Il ne travaille pas. / Tu ne parles pas.\n• Devant voyelle : n' → Il n'aime pas.\nRègle : NE précède le verbe, PAS le suit.\n/ Negación en francés :\nnegativo = NE + verbo + PAS\n• Ante vocal: NE → N' (élision)\nNE precede al verbo, PAS lo sigue." },
+
+  { topic:"Négation", q:"Mettez à la négation : « Je parle anglais. »", tr:"Pon en negativo: «Yo hablo inglés.»",
+    opts:["Je ne parle pas anglais.","Je parle ne anglais pas.","Pas je parle anglais.","Je parle anglais ne pas."], ans:0,
+    xp:"Négation en français :\nstructure : sujet + NE + verbe + PAS + reste\n✓ Je NE parle PAS anglais.\n✗ Ne va jamais entre sujet et NE, ni après le verbe.\nRègle d'or : NE colle au verbe à gauche, PAS à droite.\n/ Negación en francés :\nestructura: sujeto + NE + verbo + PAS + resto\n✓ Je ne parle pas anglais.\nNE siempre antes del verbo, PAS siempre después." },
+
+  { topic:"Négation", q:"Complétez : « Je ___ comprends pas. »", tr:"Completa: «Yo ___ entiendo.»",
+    opts:["ne","pas","n'","non"], ans:0,
+    xp:"Négation en français :\nje NE comprends pas → structure : NE + verbe + PAS\n• «comprends» commence par une consonne → NE (pas d'élision)\n• Élision seulement devant voyelle : je N'aime pas\nComparer : je ne comprends pas / je n'aime pas\n/ Negación en francés :\n«comprends» empieza por consonante → NE (sin élisión)\nÉlisión (N') solo ante vocal: je n'aime pas" },
+
+  { topic:"Négation", q:"Complétez : « Il n'___ pas de bureau. »", tr:"Completa: «Él no ___ una oficina.»",
+    opts:["est","a","ai","avons"], ans:1,
+    xp:"AVOIR à la négative :\nil A un bureau → il N'A PAS de bureau\nRègle : à la négative, un/une/des → DE\n• Il a un bureau → Il n'a pas DE bureau.\n• Elle a une voiture → Elle n'a pas DE voiture.\n/ AVOIR en negativo :\nil a un bureau → il n'a pas DE bureau\nRegla: en negativo, un/une/des → DE\nEl artículo indefinido cambia a DE en negativo." },
+
+  { topic:"Négation", q:"Complétez : « Nous ___ avons pas de rendez-vous. »", tr:"Completa: «Nosotros ___ tenemos cita.»",
+    opts:["ne","pas","non","n'"], ans:0,
+    xp:"Négation en français :\nnous NE avons pas → mais : «avons» commence par voyelle !\nDonc : nous N'avons pas (élision : NE → N')\nRègle : NE + voyelle → N' (élision obligatoire)\nExemples : il N'est pas · elle N'arrive pas · je N'ai pas\n/ Negación en francés :\nante «avons» (vocal) → NE → N' (élisión)\nRegla: NE + vocal → N' (élisión obligatoria)\nej: il n'est pas · elle n'arrive pas" },
+
+  { topic:"Négation", q:"Complétez : « Elle ne travaille ___ à l'ambassade. »", tr:"Completa: «Ella no trabaja ___ en la embajada.»",
+    opts:["ne","pas","non","jamais"], ans:1,
+    xp:"Négation en français :\nstructure : NE + verbe + PAS\n→ Elle ne travaille PAS à l'ambassade.\nNote : d'autres mots peuvent remplacer PAS :\n• ne … jamais (nunca)\n• ne … plus (ya no)\n• ne … rien (nada)\nMais ici la réponse attendue est PAS.\n/ Negación: NE + verbo + PAS\nOtras negaciones: ne…jamais / ne…plus / ne…rien" },
+
+  // ── PRÉPOSITIONS pays/villes (8) ──────────────────────────────
+  { topic:"Prépositions", q:"Complétez : « Il habite ___ Paris. »", tr:"Completa: «Él vive ___ París.»",
+    opts:["à","en","au","dans"], ans:0,
+    xp:"Prépositions de lieu – règle complète :\n• Ville → À : à Paris · à Bruxelles · à Mexico\n• Pays féminin (finit en -e) → EN : en France · en Espagne\n• Pays masculin → AU : au Mexique · au Japon\n• Pays pluriel → AUX : aux États-Unis\n→ Paris est une ville → À Paris\n/ Preposiciones de lugar :\n• Ciudad → À : à Paris\n• País femenino (-e) → EN : en France\n• País masculino → AU : au Mexique\n• País plural → AUX : aux États-Unis" },
+
+  { topic:"Prépositions", q:"Complétez : « Elle va ___ Mexique. »", tr:"Completa: «Ella va ___ México.»",
+    opts:["à","en","au","aux"], ans:2,
+    xp:"Prépositions de lieu – règle complète :\n• Ville → À\n• Pays féminin (finit en -e) → EN\n• Pays masculin → AU : au Mexique · au Japon · au Canada\n• Pays pluriel → AUX\n→ «Mexique» est masculin (ne finit pas en -e) → AU Mexique\n/ Preposiciones de lugar :\n«Mexique» es masculino (no termina en -e) → AU Mexique\nRecuerda: masculino = AU, femenino = EN" },
+
+  { topic:"Prépositions", q:"Complétez : « Nous habitons ___ France. »", tr:"Completa: «Nosotros vivimos ___ Francia.»",
+    opts:["à","en","au","aux"], ans:1,
+    xp:"Prépositions de lieu – règle complète :\n• Ville → À\n• Pays féminin (finit en -e) → EN : en France · en Espagne · en Italie\n• Pays masculin → AU\n• Pays pluriel → AUX\n→ «France» est féminin (finit en -e) → EN France\n/ Preposiciones de lugar :\n«France» es femenino (termina en -e) → EN France\nPaíses femeninos (terminan en -e): France, Espagne, Italie, Belgique, Chine…" },
+
+  { topic:"Prépositions", q:"Complétez : « Ils viennent ___ Bruxelles. »", tr:"Completa: «Ellos vienen ___ Bruselas.»",
+    opts:["à","de","du","des"], ans:1,
+    xp:"Prépositions d'origine – règle complète :\n• Venir DE + ville : de Paris · de Rome · de Bruxelles\n• Venir DU + pays masculin : du Mexique · du Japon\n• Venir DE + pays féminin : de France · d'Espagne\n• Venir DES + pays pluriel : des États-Unis\n→ Bruxelles est une ville → DE Bruxelles\n/ Preposiciones de origen :\n• Ciudad → DE : de Bruxelles\n• País masc. → DU : du Mexique\n• País fem. → DE : de France" },
+
+  { topic:"Prépositions", q:"Complétez : « Il rentre ___ Mexique. »", tr:"Completa: «Él regresa ___ México.»",
+    opts:["de","du","d'","des"], ans:1,
+    xp:"Prépositions d'origine – règle complète :\n• Venir / Rentrer DE + ville : de Paris\n• Rentrer DU + pays masculin : DU Mexique · DU Canada · DU Japon\n• Rentrer DE + pays féminin : de France · d'Espagne\n• Rentrer DES + pays pluriel : des États-Unis\n→ «Mexique» masculin → DU Mexique\n/ Preposiciones de origen :\n«Mexique» masculino → DU Mexique\nDU = contraction de DE + LE (pays masculin)" },
+
+  { topic:"Prépositions", q:"Complétez : « Nous allons ___ États-Unis. »", tr:"Completa: «Nosotros vamos ___ Estados Unidos.»",
+    opts:["à","en","au","aux"], ans:3,
+    xp:"Prépositions de lieu – règle complète :\n• Ville → À\n• Pays féminin (-e) → EN\n• Pays masculin → AU\n• Pays pluriel → AUX : aux États-Unis · aux Pays-Bas · aux Philippines\n→ «États-Unis» est pluriel → AUX États-Unis\n/ Preposiciones de lugar :\n«États-Unis» es plural → AUX États-Unis\nPaíses en plural: États-Unis, Pays-Bas, Philippines → AUX" },
+
+  { topic:"Prépositions", q:"Complétez : « Elle est ___ Espagne. »", tr:"Completa: «Ella está ___ España.»",
+    opts:["à","en","au","aux"], ans:1,
+    xp:"Prépositions de lieu – règle complète :\n• Ville → À\n• Pays féminin (finit en -e) → EN : en France · en Espagne · en Italie · en Belgique\n• Pays masculin → AU\n• Pays pluriel → AUX\n→ «Espagne» est féminin (finit en -e) → EN Espagne\n/ Preposiciones de lugar :\n«Espagne» es femenino (termina en -e) → EN Espagne" },
+
+  { topic:"Prépositions", q:"Complétez : « Tu reviens ___ Italie. »", tr:"Completa: «Tú regresas ___ Italia.»",
+    opts:["de","du","d'","des"], ans:2,
+    xp:"Prépositions d'origine – règle complète :\n• DE + ville : de Paris · de Rome\n• DU + pays masculin : du Mexique\n• DE + pays féminin : de France · de Belgique\n• D' + pays féminin commençant par voyelle : D'Italie · D'Espagne · D'Allemagne\n• DES + pays pluriel : des États-Unis\n→ «Italie» féminin, commence par voyelle → D'Italie\n/ Preposiciones de origen :\n«Italie» femenino, empieza por vocal → D'Italie\nÉlisión: DE + vocal → D'" },
+
+  // ── ARTICLES définis / indéfinis (7) ──────────────────────────
+  { topic:"Articles", q:"Complétez : « Je voudrais ___ café. » (indéfini)", tr:"Completa: «Quisiera ___ café.» (indefinido)",
+    opts:["un","une","le","la"], ans:0,
+    xp:"Articles indéfinis : UN · UNE · DES\n• UN + nom masculin singulier : un café · un bureau · un passeport\n• UNE + nom féminin singulier : une réunion · une ambassade\n• DES + nom pluriel : des collègues · des réunions\n→ «café» est masculin singulier → UN café\n/ Artículos indefinidos :\n• UN + masc. sing. : un café\n• UNE + fem. sing. : une réunion\n• DES + plural : des collègues\n→ «café» masc. sing. → UN café" },
+
+  { topic:"Articles", q:"Complétez : « ___ musée est ouvert. » (défini)", tr:"Completa: «___ museo está abierto.» (definido)",
+    opts:["Un","Une","Le","La"], ans:2,
+    xp:"Articles définis : LE · LA · L' · LES\n• LE + nom masculin : le musée · le bureau · le directeur\n• LA + nom féminin : la réunion · la France · la voiture\n• L' + nom commençant par voyelle : l'ambassade · l'aéroport\n• LES + nom pluriel : les collègues · les réunions\n→ «musée» est masculin → LE musée\n/ Artículos definidos :\n• LE + masc. : le musée\n• LA + fem. : la réunion\n• L' + vocal : l'ambassade\n• LES + plural : les collègues\n→ «musée» masc. → LE musée" },
+
+  { topic:"Articles", q:"Complétez : « ___ ambassade est grande. » (défini)", tr:"Completa: «___ embajada es grande.» (definido)",
+    opts:["Le","La","L'","Les"], ans:2,
+    xp:"Articles définis : LE · LA · L' · LES\n• L' s'utilise devant un nom commençant par une VOYELLE (a, e, i, o, u) ou H muet\n• L'ambassade · l'aéroport · l'hôtel · l'avion · l'école\n→ «ambassade» commence par «a» (voyelle) → L'ambassade\n/ Artículos definidos :\nL' se usa ante vocal (a, e, i, o, u) o H muda\nej: l'ambassade · l'aéroport · l'hôtel\n→ «ambassade» empieza por vocal → L'ambassade" },
+
+  { topic:"Articles", q:"Complétez : « Elle aime ___ travail. » (défini)", tr:"Completa: «Ella ama ___ trabajo.» (definido)",
+    opts:["un","une","le","la"], ans:2,
+    xp:"Articles définis : LE · LA · L' · LES\n• On utilise l'article défini pour parler d'une chose en général ou d'une chose précise.\n• «travail» est masculin singulier → LE travail\nComparer :\n• Elle cherche UN travail. (indéfini = un parmi d'autres)\n• Elle aime LE travail. (défini = le travail en général)\n/ Artículos definidos vs. indefinidos:\n• LE travail (trabajo en general / cosa específica)\n• UN travail (un trabajo cualquiera)" },
+
+  { topic:"Articles", q:"Complétez : « ___ collègues sont sympas. » (défini pluriel)", tr:"Completa: «___ colegas son simpáticos.» (definido plural)",
+    opts:["Le","La","L'","Les"], ans:3,
+    xp:"Articles définis : LE · LA · L' · LES\n• LES s'utilise avec TOUS les noms pluriels (masc. et fém.)\n• les collègues · les réunions · les ambassadeurs · les villes\n→ «collègues» est pluriel → LES collègues\n/ Artículos definidos :\n• LES + cualquier plural (masc. o fem.)\nles collègues · les réunions · les villes\n→ «collègues» es plural → LES collègues" },
+
+  { topic:"Articles", q:"Complétez : « Il a ___ fille. » (indéfini féminin)", tr:"Completa: «Él tiene ___ hija.» (indefinido femenino)",
+    opts:["un","une","la","les"], ans:1,
+    xp:"Articles indéfinis : UN · UNE · DES\n• UNE + nom féminin singulier : une fille · une réunion · une ambassade\n• UN + nom masculin singulier : un fils · un bureau\n• DES + pluriel : des filles · des fils\n→ «fille» est féminin singulier → UNE fille\n/ Artículos indefinidos :\n• UNE + fem. sing. : une fille · une réunion\n• UN + masc. sing. : un fils · un bureau\n→ «fille» fem. sing. → UNE fille" },
+
+  { topic:"Articles", q:"Complétez : « C'est ___ beau pays. » (indéfini)", tr:"Completa: «Es ___ hermoso país.» (indefinido)",
+    opts:["un","une","le","du"], ans:0,
+    xp:"Articles indéfinis : UN · UNE · DES\n• «pays» est masculin singulier → UN pays\n• UN + adj. masc. sing. : un beau pays · un grand musée\n• UNE + adj. fém. sing. : une belle ville · une grande ambassade\nRègle : l'adjectif s'accorde avec le nom (genre et nombre)\n/ Artículos indefinidos :\n«pays» masc. sing. → UN pays\nUN + adj. masc. : un beau pays\nUNE + adj. fem. : une belle ville" },
+
+  // ── C'EST / CE SONT (5) ───────────────────────────────────────
+  { topic:"C'est/Ce sont", q:"Complétez : « ___ mon passeport. »", tr:"Completa: «___ mi pasaporte.»",
+    opts:["C'est","Ce sont","Il est","Ils sont"], ans:0,
+    xp:"C'EST vs CE SONT :\n• C'EST + singulier : c'est mon passeport · c'est une ambassade\n• CE SONT + pluriel : ce sont mes collègues · ce sont des diplomates\n→ «mon passeport» est singulier → C'EST mon passeport\nNote : on n'utilise PAS «il est» avec article/possessif\n/ C'EST vs CE SONT :\n• C'EST + singular : c'est mon passeport\n• CE SONT + plural : ce sont mes collègues\n→ «mon passeport» singular → C'EST" },
+
+  { topic:"C'est/Ce sont", q:"Complétez : « ___ mes collègues. »", tr:"Completa: «___ mis colegas.»",
+    opts:["C'est","Ce sont","Il est","Elle est"], ans:1,
+    xp:"C'EST vs CE SONT :\n• C'EST + singulier : c'est mon passeport\n• CE SONT + pluriel : ce sont mes collègues · ce sont des diplomates\n→ «mes collègues» est pluriel → CE SONT mes collègues\nNote : on n'utilise pas «ils sont» avec article/possessif\n/ C'EST vs CE SONT :\n«mes collègues» es plural → CE SONT mes collègues\nNo se usa «ils sont» con artículo o posesivo." },
+
+  { topic:"C'est/Ce sont", q:"Complétez : « ___ une ambassade. »", tr:"Completa: «___ una embajada.»",
+    opts:["C'est","Ce sont","Il est","Elle est"], ans:0,
+    xp:"C'EST vs CE SONT :\n• C'EST + singulier (avec article, possessif, ou nom propre)\n  → c'est une ambassade · c'est mon bureau · c'est Paris\n• CE SONT + pluriel\n  → ce sont des ambassades · ce sont mes bureaux\n→ «une ambassade» singulier → C'EST une ambassade\n/ C'EST + singular (con artículo, posesivo o nombre propio)\n→ c'est une ambassade (singular → C'EST)" },
+
+  { topic:"C'est/Ce sont", q:"Complétez : « ___ des diplomates. »", tr:"Completa: «___ unos diplomáticos.»",
+    opts:["C'est","Ce sont","Il est","Ils sont"], ans:1,
+    xp:"C'EST vs CE SONT :\n• C'EST + singulier\n• CE SONT + pluriel (avec article ou possessif)\n  → ce sont des diplomates · ce sont mes amis\nNote : quand on dit «ils sont diplomates» (sans article), on n'utilise pas «ce sont» mais «ils sont».\nIci : «des diplomates» avec article → CE SONT\n/ C'EST vs CE SONT :\n«des diplomates» con artículo + plural → CE SONT\nSin artículo: «ils sont diplomates» (profesión)" },
+
+  { topic:"C'est/Ce sont", q:"Complétez : « ___ ma carte de visite. »", tr:"Completa: «___ mi tarjeta de presentación.»",
+    opts:["C'est","Ce sont","Il est","Elle est"], ans:0,
+    xp:"C'EST vs CE SONT :\n• C'EST + singulier : c'est ma carte de visite\n• CE SONT + pluriel : ce sont mes cartes de visite\nRègle : C'EST et CE SONT s'utilisent pour identifier ou présenter quelque chose.\n→ «ma carte de visite» singulier → C'EST\n/ C'EST vs CE SONT :\n«ma carte de visite» singular → C'EST\nPara identificar/presentar: C'EST (sing.) / CE SONT (plur.)" },
+
+  // ── CONTRACTIONS (7) ──────────────────────────────────────────
+  { topic:"Contractions", q:"Complétez : « Je vais ___ bureau. »", tr:"Completa: «Yo voy ___ despacho.»",
+    opts:["à le","au","à la","à l'"], ans:1,
+    xp:"Contractions obligatoires en français :\n• À + LE → AU (obligatoire) : je vais AU bureau · il parle AU directeur\n• À + LES → AUX : je parle AUX collègues\n• À + LA → à la (pas de contraction) : elle va à la réunion\n• À + L' → à l' (pas de contraction) : il va à l'ambassade\n→ «bureau» est masculin singulier → À + LE → AU bureau\n/ Contracciones obligatorias :\n• À + LE → AU : je vais AU bureau\n• À + LES → AUX : je parle AUX collègues\n• À + LA y À + L' → no se contraen" },
+
+  { topic:"Contractions", q:"Complétez : « Il revient ___ Mexique. »", tr:"Completa: «Él regresa ___ México.»",
+    opts:["de le","du","de la","de l'"], ans:1,
+    xp:"Contractions obligatoires en français :\n• DE + LE → DU (obligatoire) : il revient DU Mexique · le livre DU directeur\n• DE + LES → DES : les collègues DES ambassades\n• DE + LA → de la (pas de contraction) : la voiture de la directrice\n• DE + L' → de l' (pas de contraction) : le livre de l'ambassadeur\n→ «Mexique» masculin → DE + LE → DU Mexique\n/ Contracciones obligatorias :\n• DE + LE → DU : du Mexique\n• DE + LES → DES : des collègues\n• DE + LA y DE + L' → no se contraen" },
+
+  { topic:"Contractions", q:"Complétez : « Je parle ___ directeur. »", tr:"Completa: «Yo hablo ___ director.»",
+    opts:["à le","au","à la","à l'"], ans:1,
+    xp:"Contractions avec À :\n• À + LE → AU : je parle AU directeur · je vais AU bureau\n• À + LES → AUX : je parle AUX étudiants\n• À + LA → à la (invariable) : je parle à la secrétaire\n• À + L' → à l' (invariable) : je parle à l'ambassadeur\n→ «directeur» masculin singulier → AU directeur\n/ Contracciones con À :\nÀ + LE → AU : au directeur, au bureau\nÀ + LA → à la (sin contracción)\nÀ + L' → à l' (sin contracción)" },
+
+  { topic:"Contractions", q:"Complétez : « Il vient ___ États-Unis. »", tr:"Completa: «Él viene ___ Estados Unidos.»",
+    opts:["de les","des","de la","des les"], ans:1,
+    xp:"Contractions avec DE :\n• DE + LES → DES : il vient DES États-Unis · les collègues DES ambassades\n• DE + LE → DU : il revient DU Mexique\n• DE + LA → de la (invariable)\n• DE + L' → de l' (invariable)\n→ «États-Unis» est pluriel → DE + LES → DES États-Unis\n/ Contracciones con DE :\nDE + LES → DES : des États-Unis\nDE + LE → DU : du Mexique\n→ «États-Unis» plural → DES États-Unis" },
+
+  { topic:"Contractions", q:"Complétez : « Nous allons ___ cinéma. »", tr:"Completa: «Nosotros vamos ___ cine.»",
+    opts:["à le","au","à la","à l'"], ans:1,
+    xp:"Contractions avec À :\n• À + LE → AU : nous allons AU cinéma · je vais AU bureau\n• «cinéma» est masculin singulier → À + LE → AU cinéma\nTest : LE cinéma (masc.) → au cinéma ✓\nComparer :\n• au théâtre (LE théâtre → masc.)\n• à la bibliothèque (LA bibliothèque → fém.)\n• à l'opéra (L'opéra → voyelle)\n/ Contracciones con À :\n«cinéma» masc. → À + LE → AU cinéma\nTest: si es LE → AU / si es LA → à la / si es L' → à l'" },
+
+  { topic:"Contractions", q:"Complétez : « Elle parle ___ ambassadeur. »", tr:"Completa: «Ella habla ___ embajador.»",
+    opts:["au","à le","à l'","à la"], ans:2,
+    xp:"Contractions avec À :\n• À + LE → AU : au directeur\n• À + L' (devant voyelle) → à l' : à L'ambassadeur · à L'aéroport · à L'hôtel\n→ «ambassadeur» commence par «a» (voyelle) → À L'ambassadeur\nRègle : quand le nom commence par voyelle ou H muet, l'article est L' (pas LE/LA)\nÀ + L' reste à l' (pas de contraction supplémentaire)\n/ Contracciones con À :\nante vocal: À + L' = à l' : à l'ambassadeur\nNo hay contracción adicional con L'" },
+
+  { topic:"Contractions", q:"Complétez : « Le livre ___ directrice est ici. »", tr:"Completa: «El libro ___ directora está aquí.»",
+    opts:["du","de le","de la","de l'"], ans:2,
+    xp:"Contractions avec DE :\n• DE + LE → DU : le bureau DU directeur\n• DE + LA → de la (pas de contraction) : le bureau DE LA directrice\n• DE + L' → de l' (pas de contraction) : le bureau DE L'ambassadeur\n• DE + LES → DES : les bureaux DES directeurs\n→ «directrice» est féminin → DE + LA → de la (pas de contraction !)\n/ Contracciones con DE :\nDE + LA → de la (no se contrae)\nDE + LE → DU (sí se contrae)\n→ «directrice» femenino → de la directrice" },
+
+  // ── NATIONALITÉS féminin (6) ──────────────────────────────────
+  { topic:"Nationalités", q:"Comment dit-on « francesa » en français ?", tr:"¿Cómo se dice «francesa» en francés?",
+    opts:["françoise","françaisee","française","français"], ans:2,
+    xp:"Formation du féminin des nationalités :\nRègle générale : masculin + E = féminin\n• français → françaisE\n• espagnol → espagnolE\n• mexicain → mexicainE\n• américain → américainE\nExceptions : belge / suisse (même forme masc. et fém.)\nNote : «française» prend un accent grave sur le è.\n/ Formación del femenino de nacionalidades :\nRegla general: masculino + E = femenino\nfrançais → française · espagnol → espagnole\nexcepciones: belge / suisse (invariables)" },
+
+  { topic:"Nationalités", q:"Comment dit-on « española » en français ?", tr:"¿Cómo se dice «española» en francés?",
+    opts:["espagnole","espagnolée","espagnolis","espagnola"], ans:0,
+    xp:"Formation du féminin des nationalités :\nRègle générale : masculin + E = féminin\n• espagnol → espagnolE\n• mexicain → mexicainE\n• français → françaisE\n• américain → américainE\nExceptions :\n• belge → belge (invariable)\n• suisse → suisse (invariable)\n→ espagnol → espagnolE (+ e final)\n/ Femenino de nacionalidades :\nmasculino + E: espagnol → espagnolE\ninvariables: belge, suisse" },
+
+  { topic:"Nationalités", q:"Comment dit-on « mexicana » en français ?", tr:"¿Cómo se dice «mexicana» en francés?",
+    opts:["mexicane","mexicaine","mexicainne","mexicana"], ans:1,
+    xp:"Formation du féminin des nationalités :\nNationalités en -ain → féminin en -aine :\n• mexicain → mexicainE\n• américain → américainE\n• marocain → marocainE\n• cubain → cubainE\nRègle générale : masculin + E = féminin\nIci : «mexicain» finit en -n → + e → mexicaine (pas de doublement)\n/ Femenino de nacionalidades :\nnacionalidades en -ain → femenino en -aine:\nmexicain → mexicaine · américain → américaine" },
+
+  { topic:"Nationalités", q:"Quelle est la forme féminine de « belge » ?", tr:"¿Cuál es la forma femenina de «belge»?",
+    opts:["belgee","belgien","belge","belgeuse"], ans:2,
+    xp:"Nationalités invariables en genre :\nCertaines nationalités ont la MÊME forme au masculin et au féminin :\n• belge → belge (masc. et fém.)\n• suisse → suisse (masc. et fém.)\n• russe → russe (masc. et fém.)\n• cambodgien/cambodgienne (change !)\nRègle : si la nationalité finit déjà en -e → forme invariable\n→ «belge» finit en -e → même forme au féminin : belge\n/ Nacionalidades invariables:\nsi termina en -e → misma forma masc. y fem.\nbelge → belge · suisse → suisse · russe → russe" },
+
+  { topic:"Nationalités", q:"Comment dit-on « inglesa » en français ?", tr:"¿Cómo se dice «inglesa» en francés?",
+    opts:["anglaise","anglais","angloise","anglose"], ans:0,
+    xp:"Formation du féminin des nationalités :\nNationalités en -ais → féminin en -aise :\n• anglais → anglaisE\n• français → françaisE\n• irlandais → irlandaisE\n• portugais → portugaisE\nRègle générale : masculin + E = féminin\nNote orthographique : «anglaise» ne change pas de prononciation\n/ Femenino de nacionalidades:\nen -ais → -aise:\nanglais → anglaise · français → française" },
+
+  { topic:"Nationalités", q:"Comment dit-on « americana » en français ?", tr:"¿Cómo se dice «americana» en francés?",
+    opts:["américaine","américane","américanique","américana"], ans:0,
+    xp:"Formation du féminin des nationalités :\nNationalités en -ain → féminin en -aine :\n• américain → américainE\n• mexicain → mexicainE\n• marocain → marocainE\nRègle générale : masculin + E = féminin (sans doublement de la consonne finale)\n→ américain + e = américaine\n/ Femenino de nacionalidades:\nen -ain → -aine:\naméricain → américaine · mexicain → mexicaine" },
+
+  // ── FÉMININ professions (5) ───────────────────────────────────
+  { topic:"Professions fém.", q:"Quelle est la forme féminine de « directeur » ?", tr:"¿Cuál es la forma femenina de «directeur»?",
+    opts:["directeure","directeuse","directrice","directeresse"], ans:2,
+    xp:"Formation du féminin des professions :\nNoms en -TEUR → féminin en -TRICE :\n• directeur → directRICE\n• ambassadeur → ambassadRICE\n• acteur → actRICE\n• traducteur → traductRICE\nException : chanteur → chanteuse (pas -trice)\nRègle : si le nom vient d'un verbe en -ter/-tir → généralement -trice\n/ Femenino de profesiones:\n-teur → -trice:\ndirecteur → directrice · ambassadeur → ambassadrice\nexcepción: chanteur → chanteuse" },
+
+  { topic:"Professions fém.", q:"Quelle est la forme féminine de « avocat » ?", tr:"¿Cuál es la forma femenina de «avocat»?",
+    opts:["avocate","avocatesse","avocatière","avocatrice"], ans:0,
+    xp:"Formation du féminin des professions :\nRègle générale : masculin + E = féminin :\n• avocat → avocatE\n• étudiant → étudiantE\n• assistant → assistantE\n• consultant → consultantE\n• diplomate → diplomate (déjà en -e, invariable)\nRègle : pour la plupart des noms en consonne → + e au féminin\n/ Femenino de profesiones:\nregla general: masculino + E:\navocat → avocate · étudiant → étudiante · assistant → assistante" },
+
+  { topic:"Professions fém.", q:"Quelle est la forme féminine de « ambassadeur » ?", tr:"¿Cuál es la forma femenina de «ambassadeur»?",
+    opts:["ambassadeuse","ambassadeure","ambassadrice","ambassadrice"], ans:2,
+    xp:"Formation du féminin des professions :\nNoms en -EUR → deux cas :\n1. -TEUR → -TRICE : directeur → directrice · ambassadeur → ambassadRICE\n2. -EUR → -EUSE : chanteur → chanteuse · danseur → danseuse\nRègle : si le nom vient d'un verbe en -ter → -trice\nSi non → généralement -euse\n→ ambassadeur → ambassadRICE\n/ Femenino de profesiones:\n-teur → -trice : directeur→directrice, ambassadeur→ambassadrice\n-eur → -euse : chanteur→chanteuse" },
+
+  { topic:"Professions fém.", q:"Quelle est la forme féminine de « médecin » ?", tr:"¿Cuál es la forma femenina de «médecin»?",
+    opts:["médecine","médecine","médecin","médecinne"], ans:2,
+    xp:"Professions invariables en genre :\nCertains noms de professions restent identiques au masculin et au féminin :\n• médecin → médecin (masc. et fém.)\n• professeur → professeur (traditionnel) / professeure (moderne)\n• ingénieur → ingénieure (de plus en plus utilisé)\nOn dit : «elle est médecin» ou «le médecin» même pour une femme\n/ Profesiones invariables en género:\nmédecin → médecin (masc. y fem.)\n«elle est médecin» (sin cambio)\nEn francés moderno: professeure, ingénieure (con e final)" },
+
+  { topic:"Professions fém.", q:"Quelle est la forme féminine de « secrétaire » ?", tr:"¿Cuál es la forma femenina de «secrétaire»?",
+    opts:["secrétairesse","secrétairice","secrétaire","secrétairette"], ans:2,
+    xp:"Professions invariables en genre :\nNoms de professions se terminant en -AIRE → même forme au féminin :\n• secrétaire → secrétaire (masc. et fém.)\n• stagiaire → stagiaire (masc. et fém.)\n• notaire → notaire (masc. et fém.)\n• commissaire → commissaire (masc. et fém.)\nRègle : si la profession finit en -e → généralement invariable\n/ Profesiones invariables:\nprofesiones en -aire → misma forma:\nsecrétaire → secrétaire · stagiaire → stagiaire" },
+
+  // ── MIXTE (5) ─────────────────────────────────────────────────
+  { topic:"Mixte", q:"Quelle phrase est correcte ?", tr:"¿Qué oración es correcta?",
+    opts:["Elle est una directrice.","Elle est une directrice.","Elle est un directrice.","Elle est les directrice."], ans:1,
+    xp:"Article indéfini + accord en genre :\n• UN + masculin singulier : il est UN directeur\n• UNE + féminin singulier : elle est UNE directrice\n• DES + pluriel : ce sont DES directeurs / DES directrices\nIci : «directrice» est féminin → UNE directrice\nErreur fréquente : «una» n'existe pas en français !\n/ Artículo indefinido + acuerdo en género:\nUN + masc. : un directeur\nUNE + fem. : une directrice\nCuidado: «una» no existe en francés." },
+
+  { topic:"Mixte", q:"Complétez : « ___ suis français. Je vais ___ France. »", tr:"Completa: «___ soy francés. Voy ___ Francia.»",
+    opts:["Je / en","Je / à","Moi / en","Je / au"], ans:0,
+    xp:"Deux règles combinées :\n1. ÊTRE au présent : je SUIS (sujet = pronom «je»)\n2. Prépositions + pays :\n   • France est féminin (finit en -e) → EN France\n   • Mexique est masculin → AU Mexique\n   • Paris est une ville → À Paris\n→ Je suis français. Je vais EN France.\n/ Dos reglas combinadas:\n1. ÊTRE: je SUIS\n2. France (femenino, termina en -e) → EN France" },
+
+  { topic:"Mixte", q:"Quelle est la question correcte pour obtenir la réponse « Je m'appelle Marie » ?", tr:"¿Cuál es la pregunta correcta para obtener la respuesta «Je m'appelle Marie»?",
+    opts:["Tu es comment ?","Tu t'appelles comment ?","Comment tu es ?","Tu appelles comment ?"], ans:1,
+    xp:"S'APPELER – formes interrogatives :\n• Tu t'appelles comment ? (intonation)\n• Comment tu t'appelles ? (inversion informelle)\n• Comment vous appelez-vous ? (formel)\nRègle : S'APPELER est pronominal → le pronom réfléchi change avec le sujet :\n• je m'appelle · tu t'appelles · il/elle s'appelle\n• nous nous appelons · vous vous appelez · ils/elles s'appellent\n/ S'APPELER – formas interrogativas:\n«Tu t'appelles comment?» o «Comment t'appelles-tu?»\nVerbo pronominal: pronombre reflexivo varía con el sujeto" },
+
+  { topic:"Mixte", q:"Complétez : « Il n'___ pas de réunion aujourd'hui. »", tr:"Completa: «Él no ___ reunión hoy.»",
+    opts:["est","a","ai","avons"], ans:1,
+    xp:"AVOIR à la négative + article :\nrègle 1 : AVOIR au présent → il A une réunion\nrègle 2 : à la négative → il N'A PAS de réunion\nrègle 3 : à la négative, UN/UNE/DES → DE :\n• Il a une réunion. → Il n'a pas DE réunion.\n• Elle a un bureau. → Elle n'a pas DE bureau.\n• Ils ont des collègues. → Ils n'ont pas DE collègues.\n/ AVOIR en negativo + artículo:\nil a une réunion → il n'a pas DE réunion\nEn negativo: un/une/des → DE (o D' ante vocal)" },
+
+  { topic:"Mixte", q:"Choisissez la bonne traduction de « Somos diplomáticos mexicanos. »", tr:"Elige la buena traducción de «Somos diplomáticos mexicanos.»",
+    opts:["Nous êtes diplomates mexicains.","Nous sommes diplomates mexicains.","Nous avons diplomates mexicains.","Nous sommes des diplomates mexicains."], ans:1,
+    xp:"Traduction + règles combinées :\n1. ÊTRE : nous SOMMES (1ère pers. plur.)\n2. Profession sans article : «il est médecin» / «nous sommes diplomates»\n   → On dit «diplomates» SANS article quand on parle de la profession\n   (on pourrait aussi dire «des diplomates» mais ici on préfère sans)\n3. Adjectif de nationalité : mexicains (accord masc. plur.)\n→ Nous sommes diplomates mexicains.\n/ Traducción + reglas combinadas:\n1. ÊTRE: nous SOMMES\n2. Profesión sin artículo: nous sommes diplomates\n3. Adj. nacionalidad: mexicains (masc. plur.)" }
+
+];
+
+/* ================================================================
+   LOGIQUE
+================================================================ */
+let session = [], idx = 0, score = 0, answered = false;
+
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+
+function startSession() {
+  session  = shuffle(BANK).slice(0, 10);
+  idx      = 0;
+  score    = 0;
+  answered = false;
+  document.getElementById('score-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display  = 'flex';
+  document.getElementById('quiz-screen').style.flexDirection = 'column';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = session[idx];
+  answered = false;
+
+  document.getElementById('prog-text').textContent = `Question ${idx + 1} / 10`;
+  document.getElementById('score-live').textContent = `Score : ${score}`;
+  document.getElementById('prog-fill').style.width  = `${(idx / 10) * 100}%`;
+
+  document.getElementById('topic-tag').textContent = q.topic;
+  document.getElementById('q-text').textContent    = q.q;
+  document.getElementById('q-tr').textContent      = q.tr;
+
+  const opts = shuffle(q.opts.map((t, i) => ({ t, ok: i === q.ans })));
+  const cont = document.getElementById('options');
+  cont.innerHTML = '';
+  opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className       = 'opt-btn';
+    btn.dataset.correct = o.ok;
+    btn.innerHTML       = `<span class="key-hint">${i + 1}</span>${o.t}`;
+    btn.addEventListener('click', () => handleAnswer(btn, q));
+    cont.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'none';
+  fb.className     = 'feedback';
+  document.getElementById('btn-next').style.display = 'none';
+}
+
+function handleAnswer(sel, q) {
+  if (answered) return;
+  answered = true;
+
+  const ok = sel.dataset.correct === 'true';
+  if (ok) score++;
+
+  document.querySelectorAll('.opt-btn').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct === 'true') b.classList.add('correct');
+    else if (b === sel && !ok)        b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.style.display = 'block';
+  fb.className     = 'feedback ' + (ok ? 'correct' : 'wrong');
+  document.getElementById('fb-head').textContent = ok
+    ? '✓ Correct !'
+    : `✗ Incorrect — La bonne réponse est : ${q.opts[q.ans]}`;
+  document.getElementById('fb-body').textContent = q.xp;
+  document.getElementById('score-live').textContent = `Score : ${score}`;
+
+  const nb = document.getElementById('btn-next');
+  nb.style.display = 'block';
+  nb.textContent   = idx < 9 ? 'Question suivante →' : 'Voir le résultat →';
+}
+
+function nextQuestion() {
+  idx++;
+  if (idx < 10) showQuestion();
+  else showScore();
+}
+
+function showScore() {
+  document.getElementById('quiz-screen').style.display  = 'none';
+  document.getElementById('score-screen').style.display = 'flex';
+  document.getElementById('sc-num').textContent = score;
+  document.getElementById('sc-pct').textContent = `${score * 10} %`;
+  const msgs = [
+    [10, '🏆 Parfait ! Félicitations !'],
+    [8,  '⭐ Excellent ! Bravo !'],
+    [6,  '👍 Bien ! Continuez à réviser.'],
+    [4,  '📚 Pas mal. Révisez les points difficiles.'],
+    [0,  '💪 Continuez ! La pratique paie toujours.']
+  ];
+  document.getElementById('sc-msg').textContent =
+    (msgs.find(([min]) => score >= min) || msgs[msgs.length - 1])[1];
+}
+
+function goToCover() {
+  document.getElementById('cover').classList.remove('hidden');
+}
+
+function restart() {
+  switchTab('quiz');
+  startSession();
+}
+
+function switchTab(tab) {
+  ['quiz','grammar'].forEach(t => {
+    document.getElementById('pane-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tab-btn-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+function commencer() {
+  document.getElementById('cover').classList.add('hidden');
+  startSession();
+}
+
+// ── Raccourcis clavier ──────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  const key = e.key;
+  if (['1','2','3','4'].includes(key)) {
+    if (answered) return;
+    const btns = document.querySelectorAll('.opt-btn:not(:disabled)');
+    const i = parseInt(key) - 1;
+    if (btns[i]) btns[i].click();
+  }
+  if ((key === 'Enter' || key === ' ') && answered) {
+    e.preventDefault();
+    const nb = document.getElementById('btn-next');
+    if (nb.style.display !== 'none') nb.click();
+  }
+});
+</script>
+</body>
+</html>
